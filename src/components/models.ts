@@ -1,6 +1,7 @@
 import { Moment } from "moment";
 
 export interface IEventData {
+  hoursMinutes: Moment;
   title: string;
   description: string;
   id: number;

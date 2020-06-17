@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { clearAllEvents, setAllEvents } from "./backendSimulation/api";
+import { clearAllEvents_api, setAllEvents_api } from "./backendSimulation/api";
 import Portal from "./ui/portal/Portal";
 import { Popover } from "./ui/popover/Popover";
 import CalendarNotes from "./components/eventsCalendar";
@@ -7,9 +7,9 @@ import "./App.css";
 
 const App = (props) => {
   useEffect(() => {
-    setAllEvents([]);
+    setAllEvents_api({});
     return () => {
-      clearAllEvents();
+      clearAllEvents_api();
     };
   }, []);
   return (

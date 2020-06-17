@@ -53,12 +53,15 @@ const EventRectangle: FC<IEventReactangle> = ({
     >
       <Text
         additionalStyle={{ color: "white", paddingLeft: 3 }}
-        text={`${dayDate.format("hh:mm")} ${eventData.title}`}
+        text={`${moment(eventData.hoursMinutes).format("HH:mm")} ${
+          eventData.title
+        }`}
       />
     </div>
   );
 };
 export const DaySquare: FC<IDaySquare> = ({ elementData }) => {
+  // console.log(elementData.date.format("HH:mm"));
   const { onOpenPopover } = useContext(PopoverContext);
   const { currentMonthName } = useContext(EventsCalendarContext);
   const isDayInCurrentMonth = useMemo(
@@ -67,7 +70,7 @@ export const DaySquare: FC<IDaySquare> = ({ elementData }) => {
   );
 
   const onClickElement = (e: MouseEvent<HTMLElement>) => {
-    console.log("onClickElement");
+    console.log("onClickElement " + elementData.date.format("HH:mm"));
     onOpenPopover({
       coordinate: {
         x: e.currentTarget.getBoundingClientRect().left + 85,
@@ -79,12 +82,14 @@ export const DaySquare: FC<IDaySquare> = ({ elementData }) => {
           event: {
             id: Math.ceil(Math.random() * 1000),
             title: "",
+            hoursMinutes: elementData.date,
             description: "",
           },
         },
       },
     });
   };
+
   return (
     <div
       style={{

@@ -1,10 +1,13 @@
 import React, { useReducer, useCallback, useEffect } from "react";
 import moment from "moment";
 import { getUpdatedMonthEvents, getMonthName } from "../../utils";
-import { addUpdatedMonthEventsToAllEvents } from "./utils";
-import { clearAllEvents } from "../../../backendSimulation/api";
+import {
+  addEventOnDay_api,
+  getMonthEventsFromStorage_api,
+  clearAllEvents_api,
+  deleteEvent_api,
+} from "../../../backendSimulation/api";
 import { reducer } from "./reducer";
-import { getMonthEventsFromStorage } from "../../../backendSimulation/api";
 import { IDayEvents, IDayEvent } from "../../models";
 
 interface IDayEventsCalendarContext {
@@ -16,7 +19,7 @@ interface IDayEventsCalendarContext {
   onRemoveAllEvents: () => void;
   onAddEventOnDay: (newEvent: IDayEvent) => void;
   onGoToTheCurrentMonth: () => void;
-  onDeleteEvent: (id: number) => void;
+  onDeleteEvent: (dayEvent: IDayEvent) => void;
 }
 
 export const EventsCalendarContext = React.createContext<
@@ -52,45 +55,70 @@ export const EventsCalendarProvider = (props) => {
   );
   const onRemoveAllEvents = useCallback(() => {
     dispatch({ type: "clear month events" });
-    clearAllEvents();
+    clearAllEvents_api();
   }, []);
   const onAddEventOnDay = useCallback(
     (newEvent: IDayEvent) => {
       dispatch({
-        type: "add event to day",
+        type: "add event on day",
         payload: { newEvent },
       });
-      const monthEvents = getMonthEventsFromStorage({
-        currentYear: state.currentYear,
-        currentMonthName: state.currentMonthName,
-      });
-
-      const monthEventsWithNewEvent = getUpdatedMonthEvents({
-        monthEvents,
-        newEvent,
-      });
-
-      addUpdatedMonthEventsToAllEvents(
-        monthEventsWithNewEvent,
-        state.currentYear,
-        state.currentMonthName,
-        newEvent
-      );
+      const checkIsEventAlreadyExistInMonth = (
+        monthEvents: IDayEvents[],
+        newEvent: IDayEvent
+      ) => {
+        return state.monthEvents.some((dayEvent) =>
+          dayEvent.events.some((event) => event.id === newEvent.event.id)
+        );
+      };
+      const checkIsEventHasAnotherMonth = (
+        currentMonthName: string,
+        currentYear: number,
+        newEvent: IDayEvent
+      ) => {
+        return (
+          getMonthName(newEvent.date) !== currentMonthName ||
+          newEvent.date.year() !== currentYear
+        );
+      };
+      const getEvent = (monthEvents: IDayEvents[], id: number): IDayEvent => {
+        const dayWithEvents = monthEvents.find((dayEvent) =>
+          dayEvent.events.some((event) => event.id === id)
+        );
+        return {
+          date: dayWithEvents.date,
+          event: dayWithEvents.events.find((event) => event.id === id),
+        };
+      };
+      if (
+        checkIsEventAlreadyExistInMonth(state.monthEvents, newEvent) &&
+        checkIsEventHasAnotherMonth(
+          state.currentMonthName,
+          state.currentYear,
+          newEvent
+        )
+      ) {
+        const prevEventDate = getEvent(state.monthEvents, newEvent.event.id);
+        deleteEvent_api(prevEventDate);
+      }
+      console.log(state.monthEvents);
+      addEventOnDay_api(newEvent, state.currentMonthName, state.currentYear);
     },
-    [state.currentMonthName, state.currentYear]
+    [state.currentMonthName, state.currentYear, state.monthEvents]
   );
   const onGoToTheCurrentMonth = useCallback(() => {
     dispatch({ type: "go to current month" });
   }, []);
-  const onDeleteEvent = useCallback((id: number) => {
-    dispatch({ type: "delete event", payload: { id } });
+  const onDeleteEvent = useCallback((dayEvent: IDayEvent) => {
+    dispatch({ type: "delete event", payload: { id: dayEvent.event.id } });
+    deleteEvent_api(dayEvent);
   }, []);
 
   useEffect(() => {
     dispatch({
       type: "initialize month events",
       payload: {
-        monthEvents: getMonthEventsFromStorage({
+        monthEvents: getMonthEventsFromStorage_api({
           currentMonthName: state.currentMonthName,
           currentYear: state.currentYear,
         }),

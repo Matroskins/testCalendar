@@ -38,7 +38,7 @@ export const UiContextProvider: FC<{}> = (props) => (
         height: 17,
         fontFamily: "Proxima Nova",
         fontStyle: "normal",
-        fontWeight: 800,
+        fontWeight: "normal",
         fontSize: 8,
       },
       textarea: {

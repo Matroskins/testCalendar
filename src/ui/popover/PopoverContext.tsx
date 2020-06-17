@@ -1,5 +1,5 @@
 import React, { useReducer, useCallback, FC } from "react";
-import moment from "moment";
+import moment, { min } from "moment";
 import { TPopover, IPopoverNames } from "./models";
 // [IPopoverNames.EventPopover] | TPopover[IPopoverNames.EmptyPopover]
 type TPopoverState = {
@@ -53,8 +53,13 @@ export const PopoverProvider: FC<{}> = (props) => {
     popoverData: {
       [IPopoverNames.EventPopover]: {
         dayEvent: {
-          date: moment(),
-          event: { id: 34, title: "initia", description: "initial" },
+          date: moment("00:00", "HHmm"),
+          event: {
+            id: 34,
+            title: "initia",
+            description: "initial",
+            hoursMinutes: moment("00:00", "HHmm"),
+          },
         },
       },
       coordinate: { y: null, x: null },

@@ -1,4 +1,7 @@
 import React, { useContext, useReducer, useMemo, ChangeEvent, FC } from "react";
+import moment from "moment";
+import "./datePickerField.css";
+import DateTimePicker from "react-datetime-picker";
 import { EventsCalendarContext } from "../eventsCalendar/context/EventsCalendarContext";
 import { Button, Input, Textarea } from "../../ui";
 import { IDayEvent } from "../models";
@@ -20,17 +23,31 @@ const EventPopover: FC<IEventPopover> = (props) => {
   );
   const onChangeEventTitle = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch({
-      type: "change field",
+      type: "change event text field",
       payload: { updatedField: { title: e.currentTarget.value } },
     });
   };
   const onChangeEventDescription = (e: ChangeEvent<HTMLInputElement>) => {
     dispatch({
-      type: "change field",
+      type: "change event text field",
       payload: { updatedField: { description: e.currentTarget.value } },
     });
   };
+  const onChangeDate = (newDate: Date) => {
+    dispatch({
+      type: "change event date",
+      payload: { newDate: moment(newDate) },
+    });
+  };
   const handleSaveEvent = () => {
+    console.log(
+      "props.dayEvent.event " +
+        props.dayEvent.event.hoursMinutes.format("HH:mm")
+    );
+    console.log(
+      "state.dayEvent.event " +
+        state.dayEvent.event.hoursMinutes.format("HH:mm")
+    );
     onAddEventOnDay({
       ...state.dayEvent,
       event: {
@@ -44,7 +61,7 @@ const EventPopover: FC<IEventPopover> = (props) => {
     props.onClosePopover();
   };
   const handleDeleteEvent = () => {
-    onDeleteEvent(state.dayEvent.event.id);
+    onDeleteEvent(state.dayEvent);
     props.onClosePopover();
   };
 
@@ -64,22 +81,31 @@ const EventPopover: FC<IEventPopover> = (props) => {
       }}
     >
       <Input
+        additionalStyle={{ boxSizing: "border-box" }}
         value={state.dayEvent?.event?.title}
         type={"text"}
         onChange={onChangeEventTitle}
         placeholder={"Unassigned event title"}
       />
-      <Input
-        value={state.dayEvent?.date.format("DD.MM.YYYY")}
-        type={"text"}
-        disabled
-        additionalStyle={{ marginTop: 6 }}
+      <DateTimePicker
+        className={["event-data-field"]}
+        value={moment(state.dayEvent.event.hoursMinutes).toDate()}
+        onChange={onChangeDate}
+        clearIcon={null}
+        calendarIcon={null}
       />
       <Textarea
         value={state.dayEvent.event.description}
         onChange={onChangeEventDescription}
         placeholder={"Unassigned event description"}
-        additionalStyle={{ marginTop: 6, height: 60 }}
+        additionalStyle={{
+          marginTop: 6,
+          height: 60,
+          fontStyle: "normal",
+          fontWeight: "normal",
+          paddingRight: 0,
+          boxSizing: "border-box",
+        }}
       />
       <div
         style={{

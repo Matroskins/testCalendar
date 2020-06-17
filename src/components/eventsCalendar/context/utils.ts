@@ -1,14 +1,13 @@
 import { has, set } from "lodash";
-import { getAllEvents, setAllEvents } from "../../../backendSimulation/api";
-import { IDayEvents, IDayEvent } from "../../models";
+import { IDayEvents, IDayEvent, IAllEvents } from "../../models";
 
-export const addUpdatedMonthEventsToAllEvents = (
+export const getAllEventsWithUpdated = (
   updatedMonthEvents: IDayEvents[],
   year: number,
   month: string,
-  newEvent: IDayEvent
-) => {
-  let allEvents = getAllEvents();
+  newEvent: IDayEvent,
+  allEvents: IAllEvents
+): IAllEvents => {
   if (has(allEvents, `${year}.${month}`)) {
     allEvents[year][month] = updatedMonthEvents;
   } else {
@@ -16,6 +15,5 @@ export const addUpdatedMonthEventsToAllEvents = (
       { date: newEvent.date, events: [newEvent.event] },
     ]);
   }
-
-  setAllEvents(allEvents);
+  return allEvents;
 };

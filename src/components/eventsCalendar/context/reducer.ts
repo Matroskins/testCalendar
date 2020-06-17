@@ -4,7 +4,7 @@ import { IDayEvent, IDayEvents } from "../../models";
 import { getUpdatedMonthEvents, getMonthName } from "../../utils";
 
 type Action =
-  | { type: "add event to day"; payload: { newEvent: IDayEvent } }
+  | { type: "add event on day"; payload: { newEvent: IDayEvent } }
   | { type: "clear month events" }
   | { type: "go to current month" }
   | { type: "go to prev month" }
@@ -77,12 +77,13 @@ export function reducer(
         currentYear: today.year(),
         currentMonthName: getMonthName(today),
       };
-    case "add event to day":
+    case "add event on day":
       const updatedMonthEvents = getUpdatedMonthEvents({
         monthEvents: state.monthEvents,
         newEvent: action.payload.newEvent,
+        currentMonthName: state.currentMonthName,
+        currentYear: state.currentYear,
       });
-
       return { ...state, monthEvents: updatedMonthEvents };
     default:
       return state;

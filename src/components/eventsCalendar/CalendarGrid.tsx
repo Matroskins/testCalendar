@@ -15,7 +15,6 @@ const CalendarGrid: React.FunctionComponent<ICalendarGridProps> = (props) => {
     () => getMonthDaysWithEvents(monthEvents, currentMonthName, currentYear),
     [monthEvents, currentMonthName, currentYear]
   );
-
   return (
     <Grid
       titels={["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]}

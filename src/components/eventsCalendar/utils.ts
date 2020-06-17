@@ -31,7 +31,7 @@ export const getMonthDaysWithEvents = (
         moment(dayEvent.date).isSame(moment(monthWeekDay), "day")
       )?.events || [];
     return {
-      date: moment(monthWeekDay),
+      date: moment(monthWeekDay).set({ hour: 0, minute: 0 }),
       events: eventsOfDay,
     };
   });
@@ -41,6 +41,5 @@ export const checkIsDayInMonth = (
   dayDate: Moment,
   currentMonthName: string
 ): boolean => {
-  console.log("date" + moment(dayDate).format("MMMM") + "" + currentMonthName);
   return moment(dayDate).format("MMMM") === currentMonthName;
 };
