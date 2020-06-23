@@ -1,5 +1,6 @@
 import React, { useContext, useReducer, useMemo, ChangeEvent, FC } from "react";
 import moment from "moment";
+import { useSpring, animated } from "react-spring";
 import "./datePickerField.css";
 import DateTimePicker from "react-datetime-picker";
 import { EventsCalendarContext } from "../eventsCalendar/context/EventsCalendarContext";
@@ -13,6 +14,7 @@ interface IEventPopover {
   onClosePopover: () => void;
 }
 const EventPopover: FC<IEventPopover> = (props) => {
+  const animationProps = useSpring({ opacity: 1, from: { opacity: 0 } });
   const { onDeleteEvent, monthEvents, onAddEventOnDay } = useContext(
     EventsCalendarContext
   );
@@ -66,8 +68,9 @@ const EventPopover: FC<IEventPopover> = (props) => {
   };
 
   return (
-    <div
+    <animated.div
       style={{
+        ...animationProps,
         width: 126,
         height: 134,
         display: "flex",
@@ -134,7 +137,7 @@ const EventPopover: FC<IEventPopover> = (props) => {
           />
         )}
       </div>
-    </div>
+    </animated.div>
   );
 };
 

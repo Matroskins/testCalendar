@@ -63,45 +63,31 @@ export const EventsCalendarProvider = (props) => {
         type: "add event on day",
         payload: { newEvent },
       });
-      const checkIsEventAlreadyExistInMonth = (
-        monthEvents: IDayEvents[],
-        newEvent: IDayEvent
-      ) => {
-        return state.monthEvents.some((dayEvent) =>
-          dayEvent.events.some((event) => event.id === newEvent.event.id)
-        );
-      };
-      const checkIsEventHasAnotherMonth = (
-        currentMonthName: string,
-        currentYear: number,
-        newEvent: IDayEvent
-      ) => {
-        return (
-          getMonthName(newEvent.date) !== currentMonthName ||
-          newEvent.date.year() !== currentYear
-        );
-      };
       const getEvent = (monthEvents: IDayEvents[], id: number): IDayEvent => {
         const dayWithEvents = monthEvents.find((dayEvent) =>
           dayEvent.events.some((event) => event.id === id)
         );
-        return {
-          date: dayWithEvents.date,
-          event: dayWithEvents.events.find((event) => event.id === id),
-        };
+        if (!!dayWithEvents) {
+          return {
+            date: dayWithEvents.date,
+            event: dayWithEvents.events.find((event) => event.id === id),
+          };
+        }
+        return null;
       };
-      if (
-        checkIsEventAlreadyExistInMonth(state.monthEvents, newEvent) &&
-        checkIsEventHasAnotherMonth(
-          state.currentMonthName,
-          state.currentYear,
-          newEvent
-        )
-      ) {
-        const prevEventDate = getEvent(state.monthEvents, newEvent.event.id);
-        deleteEvent_api(prevEventDate);
+      const checkIsEventHasAnotherDay = (
+        monthEvents: IDayEvents[],
+        newEvent: IDayEvent
+      ) => {
+        const prevEvent = getEvent(monthEvents, newEvent.event.id);
+        return (
+          !!prevEvent && !moment(prevEvent?.date).isSame(newEvent.date, "day")
+        );
+      };
+      if (checkIsEventHasAnotherDay(state.monthEvents, newEvent)) {
+        const prevEventData = getEvent(state.monthEvents, newEvent.event.id);
+        deleteEvent_api(prevEventData);
       }
-      console.log(state.monthEvents);
       addEventOnDay_api(newEvent, state.currentMonthName, state.currentYear);
     },
     [state.currentMonthName, state.currentYear, state.monthEvents]

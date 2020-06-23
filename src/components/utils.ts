@@ -38,10 +38,7 @@ const getEventUpdateType = (
 
   return flow([checkIsDeleteEvent, checkIsUpdateEvent, checkIsAddNewEvent])();
 };
-export const createEvent = ({ date, event }: IDayEvent): IDayEvents => ({
-  date,
-  events: [event],
-});
+
 const checkIsEventDayChanged = (
   monthEvents: IDayEvents[],
   newEvent: IDayEvent

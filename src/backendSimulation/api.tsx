@@ -68,7 +68,6 @@ export const addEventOnDay_api = (
     currentMonthName,
     currentYear,
   });
-  // console.log(monthEvents, monthEventsWithNewEvent);
   const allEventsUpdated = getAllEventsWithUpdated(
     monthEventsWithNewEvent,
     newEvent.date.year(),
