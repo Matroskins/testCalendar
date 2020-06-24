@@ -1,16 +1,16 @@
-import React, { useContext, useMemo } from "react";
+import React, { useContext, useMemo, FC } from "react";
 import moment from "moment";
-import { GridTitles } from "./GridTitles";
+import { GridTitles } from "./CalendarGridTitles";
 import { Grid } from "../../ui/grid";
 import { EventsCalendarContext } from "./context/EventsCalendarContext";
 import { getMonthDaysWithEvents } from "./utils";
-import { DaySquare } from "./DaySquare";
+import { DaySquare } from "./daySquare/DaySquare";
 import { IDayEvents } from "../models";
 
 interface ICalendarGridProps {}
 
 const calendarTitles = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const CalendarGrid: React.FunctionComponent<ICalendarGridProps> = (props) => {
+const CalendarGrid: FC<ICalendarGridProps> = (props) => {
   const { monthEvents, currentMonthName, currentYear } = useContext(
     EventsCalendarContext
   );

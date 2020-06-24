@@ -156,3 +156,23 @@ export const checkIsEventExist = (
     dayEvent.events.some((event) => event.id === newDayEvent.event.id)
   );
 };
+
+export const getEvent = (monthEvents: IDayEvents[], id: number): IDayEvent => {
+  const dayWithEvents = monthEvents.find((dayEvent) =>
+    dayEvent.events.some((event) => event.id === id)
+  );
+  if (!!dayWithEvents) {
+    return {
+      date: dayWithEvents.date,
+      event: dayWithEvents.events.find((event) => event.id === id),
+    };
+  }
+  return null;
+};
+export const checkIsEventHasAnotherDay = (
+  monthEvents: IDayEvents[],
+  newEvent: IDayEvent
+) => {
+  const prevEvent = getEvent(monthEvents, newEvent.event.id);
+  return !!prevEvent && !moment(prevEvent?.date).isSame(newEvent.date, "day");
+};
