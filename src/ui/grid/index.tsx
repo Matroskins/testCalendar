@@ -1,26 +1,23 @@
 import React, { useMemo, FC, PropsWithChildren } from "react";
 import { chunk } from "lodash";
-import { IDayEvents } from "../../components/models";
-
-type IGridElement = IDayEvents;
 
 interface ICalendarGridProps<T> {
   gridElements: T[];
-  titles: string[];
+  rowLength: number;
   elementGrid: FC<{ elementData: T; key: string | number }>;
 }
 
 export function Grid<ObjectType>({
-  titles,
+  rowLength,
   gridElements,
   elementGrid,
 }: PropsWithChildren<ICalendarGridProps<ObjectType>>) {
-  const gridRows = useMemo(() => chunk(gridElements, titles.length), [
+  const gridRows = useMemo(() => chunk(gridElements, rowLength), [
     gridElements,
-    titles,
+    rowLength,
   ]);
   return (
-    <div style={{ borderColor: "black" }}>
+    <div>
       {gridRows.map((gridRow, ind) => {
         return (
           <div style={{ display: "flex" }} key={ind}>
